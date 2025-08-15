@@ -21,8 +21,8 @@
                     <li class="nav-item"><a class="nav-link" href="{% url 'habits' %}">Habits</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'to_do' %}">To-Do</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'notes' %}">Notes</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'reports' %}">Report</a></li>
                     {% if user.is_authenticated %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'reports' %}">Report</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
                     {% else %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
