@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-+6w(p1^&hrsxy9#q+)28vujw9w#oktd))zxzey6cw%10h$4pth
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['streak-tracker-a0da.onrender.com']
 
 
 # Application definition
