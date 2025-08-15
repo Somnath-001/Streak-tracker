@@ -1,0 +1,158 @@
+{% extends 'core/base.html' %}
+{% load django_bootstrap5 %}
+{% block content %}
+    <h2 class="text-center mb-4">Your To-Do List</h2>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Add a To-Do Task</h5>
+            <form id="todo-form">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <input type="text" class="form-control" name="task" placeholder="Task Description" required>
+                </div>
+                <div class="mb-3">
+                    <label for="deadline">Deadline:</label>
+                    <input type="datetime-local" class="form-control" name="deadline" min="{{ now }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="reminder">Reminder:</label>
+                    <input type="datetime-local" class="form-control" name="reminder" min="{{ now }}" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100" id="add-task-btn">Add Task</button>
+            </form>
+            <!-- <div id="form-message" class="mt-2"></div> -->
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="todo-list">
+        {% for todo in todos %}
+            <div class="col" data-todo-id="{{ todo.id }}">
+                <div class="card h-100 {% if todo.deadline < now and todo.status == 'pending' %}border-danger{% endif %}">
+                    <div class="card-body cbc">
+                        <h5 class="card-title {% if todo.status == 'completed' %}text-decoration-line-through{% endif %}">{{ todo.task }}</h5>
+                        <p class="card-text">
+                            <strong>Deadline:</strong> {{ todo.deadline|date:"Y-m-d h:i A" }}<br>
+                            <strong>Reminder:</strong> {{ todo.reminder|date:"Y-m-d h:i A" }}<br>
+                            <strong>Status:</strong> <span class="status">{{ todo.status|title }}</span>
+                        </p>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-sm btn-success toggle-status flex-grow-1" data-id="{{ todo.id }}">Toggle Status</button>
+                            <button class="btn btn-sm btn-danger delete-todo flex-grow-1" data-id="{{ todo.id }}">Delete</button>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <small>Created: {{ todo.created_at|date:"Y-m-d h:i A" }}</small>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col">
+                <p class="text-muted text-center">No tasks yet—add some to stay on track!</p>
+            </div>
+        {% endfor %}
+    </div>
+    <style>
+        .cbc{
+            background-color: rgb(238, 238, 238);
+        }
+    </style>
+    <script>
+        document.getElementById('todo-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const form = this;
+            const formData = new FormData(form);
+            const addBtn = document.getElementById('add-task-btn');
+            addBtn.disabled = true;
+
+            fetch("{% url 'to_do' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const messageDiv = document.getElementById('form-message');
+                if (data.success) {
+                    const todoList = document.getElementById('todo-list');
+                    const isEmpty = todoList.querySelector('.text-muted');
+                    if (isEmpty) isEmpty.parentElement.remove();
+
+                    const newCard = `
+                        <div class="col" data-todo-id="${data.id}">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">${data.task}</h5>
+                                    <p class="card-text">
+                                        <strong>Deadline:</strong> ${data.deadline}<br>
+                                        <strong>Reminder:</strong> ${data.reminder}<br>
+                                        <strong>Status:</strong> <span class="status">${data.status}</span>
+                                    </p>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-sm btn-success toggle-status flex-grow-1" data-id="${data.id}">Toggle Status</button>
+                                        <button class="btn btn-sm btn-danger delete-todo flex-grow-1" data-id="${data.id}">Delete</button>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <small>Created: ${data.created_at}</small>
+                                </div>
+                            </div>
+                        </div>`;
+                    todoList.insertAdjacentHTML('afterbegin', newCard);
+                    form.reset();
+                    messageDiv.innerHTML = '<div class="alert alert-success alert-dismissible fade show" role="alert">Task added!<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>';
+                } else {
+                    messageDiv.innerHTML = `<div class="alert alert-danger alert-dismissible fade show" role="alert">${data.error}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>`;
+                }
+            })
+            .catch(error => {
+                document.getElementById('form-message').innerHTML = '<div class="alert alert-danger alert-dismissible fade show" role="alert">Failed to add task.<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>';
+            })
+            .finally(() => {
+                addBtn.disabled = false;
+            });
+        });
+
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('toggle-status')) {
+                const id = e.target.dataset.id;
+                fetch(`{% url 'to_do' %}${id}/update/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const card = e.target.closest('.card');
+                        const title = card.querySelector('.card-title');
+                        const status = card.querySelector('.status');
+                        status.textContent = data.status;
+                        title.classList.toggle('text-decoration-line-through', data.status === 'completed');
+                        card.classList.toggle('border-danger', false);
+                    }
+                });
+            } else if (e.target.classList.contains('delete-todo')) {
+                const id = e.target.dataset.id;
+                fetch(`{% url 'to_do' %}${id}/delete/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.querySelector(`[data-todo-id="${id}"]`).remove();
+                    }
+                });
+            }
+        });
+    </script>
+{% endblock %}

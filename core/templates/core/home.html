@@ -1,0 +1,120 @@
+{% extends 'core/base.html' %}
+{% load django_bootstrap5 %}
+{% block content %}
+    <div class="container-fluid p-0">
+        <div id="motivationalSlider" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#motivationalSlider" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#motivationalSlider" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#motivationalSlider" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                <button type="button" data-bs-target="#motivationalSlider" data-bs-slide-to="3" aria-label="Slide 4"></button>
+                <button type="button" data-bs-target="#motivationalSlider" data-bs-slide-to="4" aria-label="Slide 5"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active" style="background-image: url('https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');">
+                    <div class="carousel-caption d-flex flex-column justify-content-center h-100">
+                        <h1 class="display-4 text-white fw-bold">"The only way to do great work is to love what you do."</h1>
+                        <p class="lead text-white">– Steve Jobs</p>
+                        <small class="text-white">Photo by John Doe on Unsplash</small>
+                    </div>
+                </div>
+                <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');">
+                    <div class="carousel-caption d-flex flex-column justify-content-center h-100">
+                        <h1 class="display-4 text-white fw-bold">"Success is not final, failure is not fatal: It is the courage to continue that counts."</h1>
+                        <p class="lead text-white">– Winston Churchill</p>
+                        <small class="text-white">Photo by Jane Smith on Unsplash</small>
+                    </div>
+                </div>
+                <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');">
+                    <div class="carousel-caption d-flex flex-column justify-content-center h-100">
+                        <h1 class="display-4 text-white fw-bold">"You are never too old to set another goal or to dream a new dream."</h1>
+                        <p class="lead text-white">– C.S. Lewis</p>
+                        <small class="text-white">Photo by Alex Brown on Unsplash</small>
+                    </div>
+                </div>
+                <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');">
+                    <div class="carousel-caption d-flex flex-column justify-content-center h-100">
+                        <h1 class="display-4 text-white fw-bold">"The best way to predict the future is to create it."</h1>
+                        <p class="lead text-white">– Peter Drucker</p>
+                        <small class="text-white">Photo by Emily White on Unsplash</small>
+                    </div>
+                </div>
+                <div class="carousel-item" style="background-image: url('https://images.unsplash.com/photo-1507838153414-6e6e5f6e7d0e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');">
+                    <div class="carousel-caption d-flex flex-column justify-content-center h-100">
+                        <h1 class="display-4 text-white fw-bold">"What you get by achieving your goals is not as important as what you become by achieving your goals."</h1>
+                        <p class="lead text-white">– Zig Ziglar</p>
+                        <small class="text-white">Photo by Mark Green on Unsplash</small>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#motivationalSlider" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#motivationalSlider" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+        <div class="text-center py-5">
+            <h2>Welcome to Your Productivity Hub</h2>
+            <p class="lead">Track habits, manage tasks, take notes, and stay motivated!</p>
+        </div>
+    </div>
+    <style>
+        .carousel-item {
+            height: 100vh; /* Full height on large screens */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: opacity 1s ease-in-out;
+        }
+        .carousel-caption {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            padding: 15px;
+        }
+        .carousel-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+        }
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .carousel-item {
+                height: 60vh; /* Shorter on tablets/phones */
+            }
+            .carousel-caption h1 {
+                font-size: 1.5rem; /* Smaller heading */
+            }
+            .carousel-caption p {
+                font-size: 1rem; /* Smaller quote */
+            }
+            .carousel-caption small {
+                font-size: 0.8rem;
+            }
+        }
+        @media (max-width: 576px) {
+            .carousel-item {
+                height: 50vh; /* Even shorter on small phones */
+            }
+            .carousel-caption h1 {
+                font-size: 1.25rem;
+            }
+            .carousel-caption p {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const carousel = new bootstrap.Carousel(document.getElementById('motivationalSlider'), {
+                interval: 5000,
+                ride: 'carousel'
+            });
+        });
+    </script>
+{% endblock %}

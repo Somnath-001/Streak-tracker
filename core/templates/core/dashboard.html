@@ -1,0 +1,11 @@
+{% extends 'core/base.html' %}
+{% load django_bootstrap5 %}
+{% block content %}
+    <h2>Welcome, {{ user.username }}!</h2>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    <p>Use the navigation bar above to manage your Notes, To-Dos, Habits, and view Reports.</p>
+{% endblock %}

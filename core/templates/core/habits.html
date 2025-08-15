@@ -1,0 +1,101 @@
+{% extends 'core/base.html' %}
+{% load django_bootstrap5 %}
+{% block content %}
+    <h2> H A B I T S </h2>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-danger{% endif %}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    <form method="post" class="mb-4">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-0">
+                    <label for="name" class="form-label">Habit Name</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+            </div>
+            <div class="col-md-6 align-self-end">
+                <button type="submit" class="btn btn-primary">Add Habit</button>
+            </div>
+        </div>
+    </form>
+
+    <ul class="nav nav-tabs mb-4">
+        <li class="nav-item">
+            <a class="nav-link {% if current_tab == 'ongoing' %}active bg-warning bg-gradient{% endif %}" href="{% url 'habits' 'ongoing' %}">Ongoing</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if current_tab == 'completed' %}active bg-warning bg-gradient{% endif %}" href="{% url 'habits' 'completed' %}">Completed</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if current_tab == 'deleted' %}active bg-warning bg-gradient{% endif %}" href="{% url 'habits' 'deleted' %}">Deleted</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link {% if current_tab == 'all' %}active bg-warning bg-gradient{% endif %}" href="{% url 'habits' 'all' %}">All</a>
+        </li>
+    </ul>
+
+    <div class="row">
+        {% for item in habits_with_rates %}
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header {% if item.habit.is_completed %}bg-success{% elif item.habit.is_deleted %}bg-danger{% else %}bg-primary{% endif %} text-white d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">{{ item.habit.name }}</h5>
+                        <div>
+                            {% if not item.habit.is_deleted %}
+                                {% if not item.habit.is_completed %}
+                                    <a href="{% url 'complete_habit' item.habit.id %}" class="btn btn-sm btn-light me-2" title="Mark as Completed">✓</a>
+                                {% endif %}
+                                <a href="{% url 'delete_habit' item.habit.id %}" class="btn btn-sm btn-light" title="Delete">🗑️</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="card-body cbc">
+                        <p class="card-text"><b>Start:</b> {{ item.habit.start_date }} <b>| End:</b> {{ item.habit.end_date }}</p>
+                        <p class="card-text"><b>Completion Rate:</b> {{ item.completion_rate }}%</p>
+                        <div class="checkbox-grid">
+                            {% for entry in item.habit.habitentry_set.all %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" 
+                                           {% if entry.completed %}checked{% endif %}
+                                           {% if item.habit.is_completed or item.habit.is_deleted or entry.date < today %}disabled{% endif %}
+                                           {% if not item.habit.is_completed and not item.habit.is_deleted and entry.date >= today %}
+                                               onclick="window.location.href='{% url 'update_habit' item.habit.id entry.date|date:'Y-m-d' %}'"
+                                           {% endif %}
+                                           id="entry_{{ entry.id }}">
+                                    <label class="form-check-label" for="entry_{{ entry.id }}">
+                                        {{ entry.date|date:"M d" }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <p class="text-muted">No habits in this category yet.</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <style>
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+        }
+        .form-check {
+            text-align: center;
+        }
+        .form-check-label {
+            display: block;
+            font-size: 0.9rem;
+        }
+        .cbc{
+            background-color: rgb(238, 238, 238);
+        }
+    </style>
+{% endblock %}
