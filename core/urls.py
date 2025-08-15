@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('https://streak-tracker-a0da.onrender.com', views.home, name='home'),
+    path('', views.home, name='home'),
     path('habits/<str:tab>/', views.habits, name='habits'),  # Changed 'status' to 'tab'
     # path('habits/add/', views.add_habit, name='add_habit'),
     # path('habits/edit/<int:habit_id>/', views.edit_habit, name='edit_habit'),
